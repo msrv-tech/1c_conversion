@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Просмотр БД: {{ catalog_name }} ({{ db_type }})</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: #4a5568;
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 1.8em;
+        }
+
+        .header-info {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .tables-sidebar {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            min-height: 500px;
+        }
+
+        .tables-list {
+            width: 300px;
+            min-width: 300px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 2px solid #e9ecef;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .tables-list h3 {
+            margin-bottom: 15px;
+            color: #2d3748;
+            font-size: 1.2em;
+            font-weight: 500;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #cbd5e0;
+        }
+
+        .table-item {
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid #e9ecef;
+            font-size: 0.95em;
+            word-break: break-word;
+        }
+
+        .table-item:hover {
+            background: #e9ecef;
+            border-color: #718096;
+            transform: translateX(3px);
+        }
+
+        .table-item.active {
+            background: #5a6c7d;
+            color: white;
+            border-color: #5a6c7d;
+            font-weight: 500;
+        }
+
+        .table-view {
+            flex: 1;
+            min-width: 0;
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
+        }
+
+        .table-header {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .table-header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .table-header h2 {
+            color: #333;
+            font-size: 1.5em;
+        }
+
+        .table-info {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 2px solid #e9ecef;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 5px;
+            font-size: 0.95em;
+            transition: border-color 0.3s;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #718096;
+        }
+
+        .search-box label {
+            font-weight: 600;
+            color: #333;
+            white-space: nowrap;
+        }
+
+        .search-results {
+            color: #666;
+            font-size: 0.85em;
+            margin-left: 10px;
+        }
+
+        .highlight {
+            background: #fff3cd;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: 600;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9em;
+        }
+
+        .data-table th {
+            background: #5a6c7d;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 500;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .data-table td {
+            padding: 10px;
+            border-bottom: 1px solid #e9ecef;
+            border-left: 1px solid transparent;
+            border-right: 1px solid transparent;
+        }
+
+        .data-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .data-table tr:nth-child(even) {
+            background: #fafafa;
+        }
+
+        .data-table tr:nth-child(even):hover {
+            background: #f0f0f0;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #e9ecef;
+        }
+
+        .pagination button {
+            background: #5a6c7d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background 0.2s;
+        }
+
+        .pagination button:hover:not(:disabled) {
+            background: #4a5568;
+        }
+
+        .pagination button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: #666;
+        }
+
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 50px;
+            color: #999;
+            font-style: italic;
+        }
+
+        .cell-content {
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            display: inline-block;
+            cursor: help;
+        }
+
+        .tables-list::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .tables-list::-webkit-scrollbar-track {
+            background: #e9ecef;
+            border-radius: 4px;
+        }
+
+        .tables-list::-webkit-scrollbar-thumb {
+            background: #a0aec0;
+            border-radius: 4px;
+        }
+
+        .tables-list::-webkit-scrollbar-thumb:hover {
+            background: #718096;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>📊 Просмотр базы данных</h1>
+                <div class="header-info">
+                    Справочник: <strong>{{ catalog_name }}</strong> | 
+                    Тип: <strong>{{ 'Обработанная' if db_type == 'processed' else 'Сырая' }}</strong>
+                </div>
+            </div>
+        </div>
+        
+        <div class="content">
+            <div class="tables-sidebar">
+                <div class="tables-list">
+                    <h3>📋 Таблицы</h3>
+                    <div id="tablesList">
+                        <div class="loading">Загрузка таблиц...</div>
+                    </div>
+                </div>
+                
+                <div class="table-view">
+                    <div id="tableContent">
+                        <div class="empty">Выберите таблицу для просмотра</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const catalogName = '{{ catalog_name }}';
+        const dbType = '{{ db_type }}';
+        let currentTable = null;
+        let currentOffset = 0;
+        let currentSearch = '';
+        const limit = 1000;
+        let searchTimeout = null;
+
+        // Загружаем список таблиц
+        async function loadTables() {
+            try {
+                const response = await fetch(`/api/db/tables/${catalogName}?type=${dbType}`);
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Ошибка загрузки таблиц');
+                }
+                
+                const data = await response.json();
+                renderTables(data.tables);
+            } catch (error) {
+                document.getElementById('tablesList').innerHTML = 
+                    `<div class="error">Ошибка: ${error.message}</div>`;
+            }
+        }
+
+        // Отображаем список таблиц
+        function renderTables(tables) {
+            const container = document.getElementById('tablesList');
+            if (tables.length === 0) {
+                container.innerHTML = '<div class="empty">Таблицы не найдены</div>';
+                return;
+            }
+
+            container.innerHTML = tables.map(table => {
+                const escapedTable = table.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                return `<div class="table-item" onclick="selectTable('${escapedTable}')">${table}</div>`;
+            }).join('');
+        }
+
+        // Выбор таблицы
+        async function selectTable(tableName) {
+            currentTable = tableName;
+            currentOffset = 0;
+            currentSearch = '';
+            
+            // Обновляем активную таблицу
+            document.querySelectorAll('.table-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.textContent === tableName) {
+                    item.classList.add('active');
+                }
+            });
+            
+            await loadTableData(tableName, 0, '');
+        }
+
+        // Загружаем данные таблицы
+        async function loadTableData(tableName, offset, search = '') {
+            const container = document.getElementById('tableContent');
+            container.innerHTML = '<div class="loading">Загрузка данных...</div>';
+            
+            try {
+                let url = `/api/db/table/${catalogName}/${tableName}?type=${dbType}&limit=${limit}&offset=${offset}`;
+                if (search) {
+                    url += `&search=${encodeURIComponent(search)}`;
+                }
+                
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Ошибка загрузки данных');
+                }
+                
+                const data = await response.json();
+                renderTableData(data);
+            } catch (error) {
+                container.innerHTML = `<div class="error">Ошибка: ${error.message}</div>`;
+            }
+        }
+
+        // Отображаем данные таблицы
+        function renderTableData(data) {
+            const container = document.getElementById('tableContent');
+            
+            if (data.data.length === 0) {
+                container.innerHTML = '<div class="empty">Таблица пуста</div>';
+                return;
+            }
+            
+            // Сохраняем данные для поиска
+            window.tableData = data;
+            window.tableColumns = data.columns;
+            
+            let html = `
+                <div class="table-header">
+                    <div class="table-header-top">
+                        <h2>${currentTable}</h2>
+                        <div class="table-info">
+                            Показано: ${data.offset + 1}-${data.offset + data.data.length} из ${data.total_count}
+                        </div>
+                    </div>
+                    <div class="search-box">
+                        <label for="searchInput">🔍 Поиск:</label>
+                        <input type="text" id="searchInput" placeholder="Введите текст для поиска по всем колонкам..." value="${data.search || ''}" onkeyup="handleSearchInput()">
+                        <span class="search-results" id="searchResults"></span>
+                    </div>
+                </div>
+                <div style="overflow-x: auto; max-height: 70vh;">
+                    <table class="data-table" id="dataTable">
+                        <thead>
+                            <tr>
+                                ${data.columns.map(col => {
+                                    const escapedCol = String(col)
+                                        .replace(/&/g, '&amp;')
+                                        .replace(/</g, '&lt;')
+                                        .replace(/>/g, '&gt;')
+                                        .replace(/"/g, '&quot;')
+                                        .replace(/'/g, '&#39;');
+                                    return `<th>${escapedCol}</th>`;
+                                }).join('')}
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            ${data.data.map((row, rowIndex) => `
+                                <tr data-row-index="${rowIndex}">
+                                    ${data.columns.map(col => {
+                                        let value = row[col];
+                                        if (value === null) value = '<em>NULL</em>';
+                                        else if (value === '') value = '<em>пусто</em>';
+                                        else {
+                                            // Экранируем HTML для безопасности
+                                            const escapedValue = String(value)
+                                                .replace(/&/g, '&amp;')
+                                                .replace(/</g, '&lt;')
+                                                .replace(/>/g, '&gt;')
+                                                .replace(/"/g, '&quot;')
+                                                .replace(/'/g, '&#39;');
+                                            
+                                            if (escapedValue.length > 50) {
+                                                value = `<span class="cell-content" title="${escapedValue.replace(/"/g, '&quot;')}">${escapedValue.substring(0, 50)}...</span>`;
+                                            } else {
+                                                value = escapedValue;
+                                            }
+                                        }
+                                        return `<td data-value="${String(row[col] || '').replace(/"/g, '&quot;')}">${value}</td>`;
+                                    }).join('')}
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="pagination">
+                    <button onclick="previousPage()" ${data.offset === 0 ? 'disabled' : ''}>
+                        ← Назад
+                    </button>
+                    <div>
+                        Страница ${Math.floor(data.offset / limit) + 1} из ${Math.ceil(data.total_count / limit)}
+                    </div>
+                    <button onclick="nextPage()" ${!data.has_more ? 'disabled' : ''}>
+                        Вперед →
+                    </button>
+                </div>
+            `;
+            
+            container.innerHTML = html;
+            currentOffset = data.offset;
+            currentSearch = data.search || '';
+            
+            // Подсвечиваем результаты поиска, если есть поисковый запрос
+            if (data.search) {
+                setTimeout(() => highlightSearchResults(data.search), 100);
+            }
+            
+            // Обновляем счетчик результатов поиска
+            const searchResults = document.getElementById('searchResults');
+            if (searchResults) {
+                if (data.search) {
+                    searchResults.textContent = `Найдено: ${data.data.length} из ${data.total_count}`;
+                } else {
+                    searchResults.textContent = '';
+                }
+            }
+        }
+
+        // Обработка ввода в поле поиска (с задержкой для серверного поиска)
+        function handleSearchInput() {
+            const searchInput = document.getElementById('searchInput');
+            if (!searchInput) return;
+            
+            const searchText = searchInput.value.trim();
+            
+            // Очищаем предыдущий таймер
+            if (searchTimeout) {
+                clearTimeout(searchTimeout);
+            }
+            
+            // Устанавливаем новый таймер для задержки запроса (debounce)
+            searchTimeout = setTimeout(() => {
+                currentSearch = searchText;
+                currentOffset = 0; // Сбрасываем offset при новом поиске
+                loadTableData(currentTable, 0, searchText);
+            }, 500); // Задержка 500мс
+        }
+        
+        // Подсветка найденного текста в ячейках (для визуального выделения)
+        function highlightSearchResults(searchText) {
+            if (!searchText) return;
+            
+            const tableBody = document.getElementById('tableBody');
+            if (!tableBody) return;
+            
+            const rows = tableBody.querySelectorAll('tr');
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                cells.forEach(cell => {
+                    const originalValue = cell.getAttribute('data-value') || '';
+                    const cellValue = originalValue.toLowerCase();
+                    
+                    if (cellValue.includes(searchText.toLowerCase())) {
+                        // Подсвечиваем найденный текст
+                        let escapedValue = escapeHtml(originalValue);
+                        let displayValue = highlightText(escapedValue, searchText);
+                        
+                        if (originalValue === '') {
+                            displayValue = '<em>пусто</em>';
+                        } else if (originalValue === null || originalValue === 'null') {
+                            displayValue = '<em>NULL</em>';
+                        } else if (escapedValue.length > 50) {
+                            const highlightedShort = highlightText(escapedValue.substring(0, 50), searchText);
+                            displayValue = `<span class="cell-content" title="${escapedValue.replace(/"/g, '&quot;')}">${highlightedShort}...</span>`;
+                        }
+                        
+                        cell.innerHTML = displayValue;
+                    }
+                });
+            });
+        }
+
+        // Экранирование HTML
+        function escapeHtml(text) {
+            if (text === null || text === undefined) return '';
+            return String(text)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        // Подсветка найденного текста
+        function highlightText(text, searchText) {
+            if (!text || !searchText) return text;
+            
+            const regex = new RegExp(`(${escapeRegex(searchText)})`, 'gi');
+            return text.replace(regex, '<span class="highlight">$1</span>');
+        }
+
+        // Экранирование специальных символов для regex
+        function escapeRegex(text) {
+            return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        }
+
+        // Навигация по страницам
+        function previousPage() {
+            if (currentOffset > 0) {
+                const newOffset = Math.max(0, currentOffset - limit);
+                loadTableData(currentTable, newOffset, currentSearch);
+            }
+        }
+
+        function nextPage() {
+            loadTableData(currentTable, currentOffset + limit, currentSearch);
+        }
+
+        // Загружаем таблицы при загрузке страницы
+        window.addEventListener('load', loadTables);
+    </script>
+</body>
+</html>
+

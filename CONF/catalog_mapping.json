@@ -1,0 +1,474 @@
+{
+  "Справочник.Контрагенты": {
+    "catalog_name": "contractors",
+    "loader": "contractors_loader",
+    "processor": "contractors_processor",
+    "writer": "contractors_writer",
+    "load_type": "Все",
+    "comment": "элементы с остатками/оборотами 2024–2025, исключить дубли"
+  },
+  "Справочник.НоменклатурныеГруппы": {
+    "catalog_name": "nomenclature_groups",
+    "loader": "nomenclature_groups_loader",
+    "processor": "nomenclature_groups_processor",
+    "writer": "nomenclature_groups_writer",
+    "load_type": "ПоСсылкам",
+    "comment": "все элементы с остатками, в заказах или со сроком окончания работ позже 31.12.2025"
+  },
+  "Справочник.ДоговорыКонтрагентов": {
+    "catalog_name": "contractor_contracts",
+    "loader": "contractor_contracts_loader",
+    "processor": "contractor_contracts_processor",
+    "writer": "contractor_contracts_writer",
+    "load_type": "ПоСсылкам",
+    "comment": "все элементы с остатками и в заказах"
+  },
+  "Справочник.КонтактныеЛица": {
+    "catalog_name": "contact_persons",
+    "loader": "contact_persons_loader",
+    "processor": "contact_persons_processor",
+    "writer": "contact_persons_writer",
+    "load_type": "НеГрузить",
+    "comment": "все элементы, не помеченные на удаление"
+  },
+  "Справочник.КонтактныеЛицаКонтрагентов": {
+    "catalog_name": "contractor_contact_persons",
+    "loader": "contractor_contact_persons_loader",
+    "processor": "contractor_contact_persons_processor",
+    "writer": "contractor_contact_persons_writer",
+    "load_type": "ПоСсылкам",
+    "comment": "отдельная выгрузка, поддержка отбора по UUID"
+  },
+  "Справочник.УправленческиеДоговоры": {
+    "catalog_name": "managerial_contracts",
+    "loader": "managerial_contracts_loader",
+    "processor": "managerial_contracts_processor",
+    "writer": "managerial_contracts_writer",
+    "load_type": "ПоСсылкам",
+    "comment": "управленческие договоры",
+    "tabular_sections": {
+      "ГрафикПлатежей": "managerial_contracts_payment_schedule"
+    }
+  },
+  "Справочник.УправленческиеЭтапыРабот": {
+    "catalog_name": "managerial_stages",
+    "loader": "managerial_stages_loader",
+    "processor": "managerial_stages_processor",
+    "writer": "managerial_stages_writer",
+    "load_type": "ПоСсылкам",
+    "comment": "управленческие этапы работ",
+    "tabular_sections": {
+      "ПозицииЭтапа": "managerial_stages_positions"
+    }
+  },
+  "Справочник.УправленческиеДополнительныеСоглашения": {
+    "catalog_name": "managerial_additional_agreements",
+    "loader": "managerial_additional_agreements_loader",
+    "processor": "managerial_additional_agreements_processor",
+    "writer": "managerial_additional_agreements_writer",
+    "load_type": "ПоСсылкам",
+    "comment": "управленческие дополнительные соглашения с владельцем",
+    "tabular_sections": {
+      "ГрафикПлатежей": "managerial_additional_agreements_payment_schedule"
+    }
+  },
+  "Справочник.УправленческиеЭтапыРаботДополнительныхСоглашений": {
+    "catalog_name": "managerial_stages_additional_agreements",
+    "loader": "managerial_stages_additional_agreements_loader",
+    "processor": "managerial_stages_additional_agreements_processor",
+    "writer": "managerial_stages_additional_agreements_writer",
+    "load_type": "ПоСсылкам",
+    "comment": "управленческие этапы работ дополнительных соглашений с владельцем",
+    "tabular_sections": {
+      "ОрганизацииПланаОбмена": "managerial_stages_additional_agreements_organizations_exchange_plan",
+      "ПозицииЭтапа": "managerial_stages_additional_agreements_positions"
+    }
+  },
+  "Справочник.Номенклатура": {
+    "catalog_name": "nomenclature",
+    "loader": "nomenclature_loader",
+    "processor": "nomenclature_processor",
+    "writer": "nomenclature_writer",
+    "load_type": "ПоСсылкам",
+    "comment": "элементы с остатками на 31.12.2025; поддержка фильтров UUID"
+  },
+  "Справочник.ХарактеристикиНоменклатуры": {
+    "catalog_name": "nomenclature_characteristics",
+    "loader": "nomenclature_characteristics_loader",
+    "processor": "nomenclature_characteristics_processor",
+    "writer": "nomenclature_characteristics_writer",
+    "load_type": "ПоСсылкам",
+    "comment": "только привязанные к номенклатуре, поддержка фильтров UUID"
+  },
+  "Справочник.СерииНоменклатуры": {
+    "catalog_name": "nomenclature_series",
+    "loader": "nomenclature_series_loader",
+    "processor": "nomenclature_series_processor",
+    "writer": "nomenclature_series_writer",
+    "load_type": "ПоСсылкам",
+    "comment": "серии с остатками/в документах; в УХ — номенклатура Наименование+Серия или Наименование+Характеристика+Серия"
+  },
+  "Справочник.ВидыНоменклатуры": {
+    "catalog_name": "nomenclature_types",
+    "loader": "nomenclature_types_loader",
+    "processor": "nomenclature_types_processor",
+    "writer": "nomenclature_types_writer",
+    "load_type": "Все",
+    "comment": "все элементы, не помеченные на удаление; поддержка фильтров UUID"
+  },
+  "Справочник.КлассификаторЕдиницИзмерения": {
+    "catalog_name": "units_classifier",
+    "loader": "units_classifier_loader",
+    "processor": "units_classifier_processor",
+    "writer": "units_classifier_writer",
+    "load_type": "Все",
+    "comment": "элементы, привязанные к номенклатуре; поддержка фильтров UUID"
+  },
+  "Справочник.ПодразделенияОрганизаций": {
+    "catalog_name": "organization_departments",
+    "loader": "organization_departments_loader",
+    "processor": "organization_departments_processor",
+    "writer": "organization_departments_writer",
+    "load_type": "Все",
+    "comment": "все элементы, не помеченные на удаление; поддержка фильтров UUID"
+  },
+  "Справочник.РегистрацииВНалоговомОргане": {
+    "catalog_name": "tax_registrations",
+    "loader": "tax_registrations_loader",
+    "processor": "tax_registrations_processor",
+    "writer": "tax_registrations_writer",
+    "load_type": "Все",
+    "comment": "нет"
+  },
+  "Справочник.ФизическиеЛица": {
+    "catalog_name": "individual_persons",
+    "loader": "individual_persons_loader",
+    "processor": "individual_persons_processor",
+    "writer": "individual_persons_writer",
+    "load_type": "НеГрузить",
+    "comment": "работающие + неработающие пенсионеры; табличные части, фильтр UUID"
+  },
+  "Справочник.Сотрудники": {
+    "catalog_name": "employees",
+    "loader": "employees_loader",
+    "processor": "employees_processor",
+    "writer": "employees_writer",
+    "load_type": "НеГрузить",
+    "comment": "работающие + неработающие пенсионеры"
+  },
+  "Справочник.Субконто": {
+    "catalog_name": "subkonto",
+    "loader": "subkonto_loader",
+    "processor": "subkonto_processor",
+    "writer": "subkonto_writer",
+    "load_type": "Все",
+    "comment": "все кроме помеченных на удаление"
+  },
+  "Справочник.СтатьиЗатрат": {
+    "catalog_name": "cost_items",
+    "loader": "cost_items_loader",
+    "processor": "cost_items_processor",
+    "writer": "cost_items_writer",
+    "load_type": "Все",
+    "comment": "все кроме помеченных на удаление"
+  },
+  "Справочник.Должности": {
+    "catalog_name": "positions",
+    "loader": "positions_loader",
+    "processor": "positions_processor",
+    "writer": "positions_writer",
+    "load_type": "НеГрузить",
+    "comment": "все по работающим и пенсионерам"
+  },
+  "Справочник.ПрочиеДоходыИРасходы": {
+    "catalog_name": "other_income_and_expenses",
+    "loader": "other_income_and_expenses_loader",
+    "processor": "other_income_and_expenses_processor",
+    "writer": "other_income_and_expenses_writer",
+    "load_type": "Все",
+    "comment": "элементы без пометки удаления"
+  },
+  "Справочник.БанковскиеСчета": {
+    "catalog_name": "bank_accounts",
+    "loader": "bank_accounts_loader",
+    "processor": "bank_accounts_processor",
+    "writer": "bank_accounts_writer",
+    "load_type": "Все",
+    "comment": "все банковские счета (контрагентов и организаций)"
+  },
+  "Справочник.Банки": {
+    "catalog_name": "banks",
+    "loader": "banks_loader",
+    "processor": "banks_processor",
+    "writer": "banks_writer",
+    "load_type": "Все",
+    "comment": "элементы из классификатора"
+  },
+  "Справочник.Валюты": {
+    "catalog_name": "currencies",
+    "loader": "currencies_loader",
+    "processor": "currencies_processor",
+    "writer": "currencies_writer",
+    "load_type": "Все",
+    "comment": "все без пометки удаления"
+  },
+  "Справочник.Кассы": {
+    "catalog_name": "cash_registers",
+    "loader": "cash_registers_loader",
+    "processor": "cash_registers_processor",
+    "writer": "cash_registers_writer",
+    "load_type": "Все",
+    "comment": "все без пометки удаления"
+  },
+  "Справочник.СтатьиДвиженияДенежныхСредств": {
+    "catalog_name": "cash_flow_items",
+    "loader": "cash_flow_items_loader",
+    "processor": "cash_flow_items_processor",
+    "writer": "cash_flow_items_writer",
+    "load_type": "Все",
+    "comment": "все без пометки удаления"
+  },
+  "Справочник.СтатьиОборотовПоБюджетам": {
+    "catalog_name": "budget_turnover_items",
+    "loader": "budget_turnover_items_loader",
+    "processor": "budget_turnover_items_processor",
+    "writer": "budget_turnover_items_writer",
+    "load_type": "Все",
+    "comment": "все без пометки удаления"
+  },
+  "Справочник.Склады": {
+    "catalog_name": "warehouses",
+    "loader": "warehouses_loader",
+    "processor": "warehouses_processor",
+    "writer": "warehouses_writer",
+    "load_type": "Все",
+    "comment": "все склады, кроме помеченных на удаление"
+  },
+  "Справочник.ОсновныеСредства": {
+    "catalog_name": "fixed_assets",
+    "loader": "fixed_assets_loader",
+    "processor": "fixed_assets_processor",
+    "writer": "fixed_assets_writer",
+    "load_type": "ПоСсылкам",
+    "comment": "элементы с остатками на 31.12.2025"
+  },
+  "Справочник.СобытияОС": {
+    "catalog_name": "fixed_asset_events",
+    "loader": "fixed_asset_events_loader",
+    "processor": "fixed_asset_events_processor",
+    "writer": "fixed_asset_events_writer",
+    "load_type": "Все",
+    "comment": "все без пометки удаления"
+  },
+  "Справочник.ПричиныСписанияОС": {
+    "catalog_name": "fixed_asset_writeoff_reasons",
+    "loader": "fixed_asset_writeoff_reasons_loader",
+    "processor": "fixed_asset_writeoff_reasons_processor",
+    "writer": "fixed_asset_writeoff_reasons_writer",
+    "load_type": "Все",
+    "comment": "все без пометки удаления"
+  },
+  "Справочник.РасходыБудущихПериодов": {
+    "catalog_name": "prepaid_expenses",
+    "loader": "prepaid_expenses_loader",
+    "processor": "prepaid_expenses_processor",
+    "writer": "prepaid_expenses_writer",
+    "load_type": "ПоСсылкам",
+    "comment": "только остатки сч.97 на 31.12.2025"
+  },
+  "Справочник.НематериальныеАктивы": {
+    "catalog_name": "intangible_assets",
+    "loader": "intangible_assets_loader",
+    "processor": "intangible_assets_processor",
+    "writer": "intangible_assets_writer",
+    "load_type": "ПоСсылкам",
+    "comment": "элементы с остатками на 31.12.2025"
+  },
+  "Справочник.СпособыОтраженияРасходовПоАмортизации": {
+    "catalog_name": "amortization_expense_methods",
+    "loader": "amortization_expense_methods_loader",
+    "processor": "amortization_expense_methods_processor",
+    "writer": "amortization_expense_methods_writer",
+    "load_type": "Все",
+    "comment": "все без пометки удаления",
+    "tabular_sections": {
+      "Способы": "amortization_expense_methods_details"
+    }
+  },
+  "Справочник.НазначенияИспользованияНоменклатуры": {
+    "catalog_name": "ppe_usage_purposes",
+    "loader": "ppe_usage_purposes_loader",
+    "processor": "ppe_usage_purposes_processor",
+    "writer": "ppe_usage_purposes_writer",
+    "load_type": "Все",
+    "comment": "все без пометки удаления"
+  },
+  "Справочник.ТранспортныеСредства": {
+    "catalog_name": "vehicles",
+    "loader": "vehicles_loader",
+    "processor": "vehicles_processor",
+    "writer": "vehicles_writer",
+    "load_type": "ПоСсылкам",
+    "comment": "элементы с остатками на 31.12.2025"
+  },
+  "Справочник.БланкиСтрогойОтчетности": {
+    "catalog_name": "strict_reporting_forms",
+    "loader": "strict_reporting_forms_loader",
+    "processor": "strict_reporting_forms_processor",
+    "writer": "strict_reporting_forms_writer",
+    "load_type": "Все",
+    "comment": "элементы с остатками на 31.12.2025"
+  },
+  "Справочник.СпособыОтраженияЗарплатыВБухУчете": {
+    "catalog_name": "salary_posting_methods",
+    "loader": "salary_posting_methods_loader",
+    "processor": "salary_posting_methods_processor",
+    "writer": "salary_posting_methods_writer",
+    "load_type": "Все",
+    "comment": "все без пометки удаления"
+  },
+  "Справочник.Резервы": {
+    "catalog_name": "reserves",
+    "loader": "reserves_loader",
+    "processor": "reserves_processor",
+    "writer": "reserves_writer",
+    "load_type": "Все",
+    "comment": "все без пометки удаления"
+  },
+  "Справочник.ОбъектыСтроительства": {
+    "catalog_name": "construction_objects",
+    "loader": "construction_objects_loader",
+    "processor": "construction_objects_processor",
+    "writer": "construction_objects_writer",
+    "load_type": "Все",
+    "comment": "все без пометки удаления"
+  },
+  "Справочник.Проекты": {
+    "catalog_name": "projects",
+    "loader": "projects_loader",
+    "processor": "projects_processor",
+    "writer": "projects_writer",
+    "load_type": "Все",
+    "comment": "все элементы, не помеченные на удаление; иерархия, этапы проекта"
+  },
+  "Документ.ЗаказПокупателя→Справочник.ДоговорыКонтрагентов": {
+    "catalog_name": "customer_orders",
+    "loader": "customer_orders_loader",
+    "processor": "customer_orders_processor",
+    "writer": "customer_orders_writer",
+    "load_type": "ПоСсылкам",
+    "comment": "преобразование документов Заказ покупателя в справочник ДоговорыКонтрагентов с видом Спецификация, период 2020-2025"
+  },
+  "Документ.ЗаказПоставщику→Справочник.ДоговорыКонтрагентов": {
+    "catalog_name": "supplier_orders",
+    "loader": "supplier_orders_loader",
+    "processor": "supplier_orders_processor",
+    "writer": "supplier_orders_writer",
+    "load_type": "ПоСсылкам",
+    "comment": "преобразование документов Заказ поставщику в справочник ДоговорыКонтрагентов с видом Спецификация, период 2020-2025"
+  },
+  "Остатки.НоменклатурныеГруппы→Документ.ВводНачальныхОстатков": {
+    "catalog_name": "balances_nomenclature_groups",
+    "loader": "balances_nomenclature_groups_loader",
+    "processor": "balances_nomenclature_groups_processor",
+    "writer": "balances_nomenclature_groups_writer",
+    "load_type": "Все",
+    "comment": "перенос номенклатурных групп из остатков счетов 20, 23, 29, 90 в документ Ввод начальных остатков"
+  },
+  "Остатки.ВзаиморасчетыСПокупателями→Документ.ВводНачальныхОстатков": {
+    "catalog_name": "customer_balances",
+    "loader": "customer_balances_loader",
+    "processor": "customer_balances_processor",
+    "writer": "customer_balances_writer",
+    "load_type": "Все",
+    "comment": "перенос остатков взаиморасчетов с покупателями в документ Ввод начальных остатков"
+  },
+  "Остатки.ВзаиморасчетыСПоставщиками→Документ.ВводНачальныхОстатков": {
+    "catalog_name": "supplier_balances",
+    "loader": "supplier_balances_loader",
+    "processor": "supplier_balances_processor",
+    "writer": "supplier_balances_writer",
+    "load_type": "Все",
+    "comment": "перенос остатков взаиморасчетов с поставщиками в документ Ввод начальных остатков"
+  },
+  "Остатки.Характеристики→Документ.ВводНачальныхОстатков": {
+    "catalog_name": "characteristics_balances",
+    "loader": "characteristics_balances_loader",
+    "processor": "characteristics_balances_processor",
+    "writer": "characteristics_balances_writer",
+    "load_type": "Все",
+    "comment": "перенос остатков МПЗ (включая номенклатуру без характеристик) в документ Ввод начальных остатков"
+  },
+  "Остатки.РасчетыСПрочимиДебиторамиИКредиторами→Документ.ВводНачальныхОстатков": {
+    "catalog_name": "other_debtors_balances",
+    "loader": "other_debtors_balances_loader",
+    "processor": "other_debtors_balances_processor",
+    "writer": "other_debtors_balances_writer",
+    "load_type": "Все",
+    "comment": "перенос остатков по счёту 76 (кроме 76.10, 76.41) в документ Ввод начальных остатков"
+  },
+  "Остатки.СпецодеждаИСпецоснасткаВЭксплуатации→Документ.ВводНачальныхОстатков": {
+    "catalog_name": "spec_equipment_balances",
+    "loader": "spec_equipment_balances_loader",
+    "processor": "spec_equipment_balances_processor",
+    "writer": "spec_equipment_balances_writer",
+    "load_type": "Все",
+    "comment": "перенос остатков по счёту 10.11 из регистра ПартииМатериаловВЭксплуатацииБухгалтерскийУчет в ТЧ СпецодеждаИСпецоснасткаВЭксплуатации документа Ввод начальных остатков"
+  },
+  "Остатки.МЦНаРаботниках→Документ.ВводНачальныхОстатков": {
+    "catalog_name": "materials_workers_balances",
+    "loader": "materials_workers_balances_loader",
+    "processor": "materials_workers_balances_processor",
+    "writer": "materials_workers_balances_writer",
+    "load_type": "Все",
+    "comment": "перенос остатков по счёту МЦЭ (субконто Работники, Номенклатура, Характеристика) в ТЧ БухСправка документа Ввод начальных остатков, раздел ПрочиеСчетаБухгалтерскогоУчета"
+  },
+  "Остатки.Счет01301РБП→Документ.ВводНачальныхОстатков": {
+    "catalog_name": "account_01301_rbp_balances",
+    "loader": "account_01301_rbp_balances_loader",
+    "processor": "account_01301_rbp_balances_processor",
+    "writer": "account_01301_rbp_balances_writer",
+    "load_type": "Все",
+    "comment": "перенос остатков по счёту 013.01 при Субконто1=РасходыБудущихПериодов в ТЧ БухСправка, раздел ПрочиеСчетаБухгалтерскогоУчета; только БУ"
+  },
+  "Остатки.МЦПартииВЭксплуатации→Документ.ВводНачальныхОстатков": {
+    "catalog_name": "parties_mc_balances",
+    "loader": "parties_mc_balances_loader",
+    "processor": "parties_mc_balances_processor",
+    "writer": "parties_mc_balances_writer",
+    "load_type": "Все",
+    "comment": "перенос остатков МЦ.02, МЦ.04 из ПартииМатериаловВЭксплуатацииБухгалтерскийУчет (счета 10.11, 10.09) в ТЧ БухСправка, раздел ПрочиеСчетаБухгалтерскогоУчета, с созданием номенклатуры Наименование_Характеристика_Серия"
+  },
+  "Остатки.Счет20→Документ.ВводНачальныхОстатков": {
+    "catalog_name": "account_20_balances",
+    "loader": "account_20_balances_loader",
+    "processor": "account_20_balances_processor",
+    "writer": "account_20_balances_writer",
+    "load_type": "Все",
+    "comment": "перенос остатков по счёту 20 (основное производство) в документ Ввод начальных остатков, раздел НезавершенноеПроизводство, ТЧ БухСправка, документы разбиваются по подразделениям"
+  },
+  "Остатки.ОсновныеСредства→Документ.ВводНачальныхОстатков": {
+    "catalog_name": "fixed_assets_balances",
+    "loader": "fixed_assets_balances_loader",
+    "processor": "fixed_assets_balances_processor",
+    "writer": "fixed_assets_balances_writer",
+    "load_type": "Все",
+    "comment": "перенос остатков основных средств (ОС) в документ Ввод начальных остатков, раздел ОсновныеСредства, ТЧ ОС, документы разбиваются по подразделениям"
+  },
+  "Остатки.НематериальныеАктивы→Документ.ВводНачальныхОстатков": {
+    "catalog_name": "intangible_assets_balances",
+    "loader": "intangible_assets_balances_loader",
+    "processor": "intangible_assets_balances_processor",
+    "writer": "intangible_assets_balances_writer",
+    "load_type": "Все",
+    "comment": "перенос остатков НМА (счета 04, 05) в документ Ввод начальных остатков, раздел НематериальныеАктивыИНИОКР, ТЧ НМА"
+  },
+  "ДопРегистрыОС→РегистрыСведений": {
+    "catalog_name": "fixed_assets_additional_registers",
+    "loader": "fixed_assets_additional_registers_loader",
+    "processor": "fixed_assets_additional_registers_processor",
+    "writer": "fixed_assets_additional_registers_writer",
+    "load_type": "ПоСсылкам",
+    "comment": "Доп. регистры ОС: ставки налога на имущество, регистрация транспортных средств и земельных участков. Только ОС с остатками."
+  }
+}

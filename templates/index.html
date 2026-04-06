@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Веб-интерфейс обмена справочников</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f2f5;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: #4a5568;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .connections-info {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            padding: 15px 20px;
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            font-size: 0.95em;
+        }
+
+        .connection-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .connection-label {
+            font-weight: 500;
+            opacity: 0.9;
+        }
+
+        .connection-path {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 5px 12px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            word-break: break-all;
+            max-width: 500px;
+        }
+        
+        .connection-target {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+        
+        .target-select {
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            padding: 5px 8px;
+            font-size: 0.9em;
+        }
+        
+        .target-select option {
+            color: #1a202c;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .catalogs-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: #2d3748;
+            border-bottom: 2px solid #cbd5e0;
+            padding-bottom: 10px;
+        }
+
+        .catalogs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .catalog-item {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .catalog-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .catalog-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .db-modified {
+            font-size: 0.8em;
+            color: #718096;
+            margin-left: 4px;
+        }
+        
+        .export-by-code-button {
+            flex: 1;
+            background: #4299e1;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.85em;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .export-by-code-button:hover {
+            background: #3182ce;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+        }
+
+        .view-db-button {
+            flex: 1;
+            background: #68d391;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.85em;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .view-db-button:hover {
+            background: #48bb78;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+        }
+
+        .view-db-button.processed {
+            background: #9f7aea;
+        }
+
+        .view-db-button.processed:hover {
+            background: #805ad5;
+        }
+
+        .catalog-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .catalog-button:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .catalog-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            background: #999;
+        }
+
+        .catalog-button.running {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        .catalog-name {
+            display: block;
+            font-size: 1.1em;
+            margin-bottom: 5px;
+        }
+
+        .catalog-comment {
+            display: block;
+            font-size: 0.85em;
+            opacity: 0.9;
+            font-weight: normal;
+        }
+
+        .logs-section {
+            margin-top: 30px;
+        }
+
+        .logs-container {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            height: 500px;
+            overflow-y: auto;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.6;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .logs-container::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .logs-container::-webkit-scrollbar-track {
+            background: #2d2d2d;
+        }
+
+        .logs-container::-webkit-scrollbar-thumb {
+            background: #555;
+            border-radius: 5px;
+        }
+
+        .logs-container::-webkit-scrollbar-thumb:hover {
+            background: #777;
+        }
+
+        .log-line {
+            margin-bottom: 2px;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+        }
+
+        .log-line.error {
+            color: #f48771;
+        }
+
+        .log-line.success {
+            color: #4ec9b0;
+        }
+
+        .log-line.info {
+            color: #569cd6;
+        }
+
+        .log-line.warning {
+            color: #dcdcaa;
+        }
+
+        .empty-logs {
+            text-align: center;
+            color: #666;
+            padding: 50px;
+            font-style: italic;
+        }
+
+        .clear-logs-btn {
+            background: #e53e3e;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+            transition: background 0.2s ease;
+        }
+
+        .clear-logs-btn:hover {
+            background: #c53030;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+            background: #48bb78;
+            animation: blink 1s infinite;
+        }
+
+        .status-indicator.idle {
+            background: #a0aec0;
+            animation: none;
+        }
+
+        @keyframes blink {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.3;
+            }
+        }
+        
+        /* Модальное окно для экспорта по кодам */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            overflow: auto;
+        }
+        
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 30px;
+            border: 1px solid #888;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        
+        .modal-header h2 {
+            margin: 0;
+            color: #2d3748;
+            font-size: 1.5em;
+        }
+        
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        
+        .close:hover,
+        .close:focus {
+            color: #000;
+        }
+        
+        .modal-body {
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2d3748;
+        }
+        
+        .form-group textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 10px;
+            border: 2px solid #cbd5e0;
+            border-radius: 5px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            resize: vertical;
+            box-sizing: border-box;
+        }
+        
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #4299e1;
+        }
+        
+        .form-group .hint {
+            font-size: 0.85em;
+            color: #718096;
+            margin-top: 5px;
+        }
+        
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            padding-top: 15px;
+            border-top: 2px solid #e2e8f0;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-primary {
+            background: #4299e1;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #3182ce;
+        }
+        
+        .btn-secondary {
+            background: #a0aec0;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #718096;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔄 Веб-интерфейс обмена справочников</h1>
+            <p>Запуск полного цикла обмена в режиме full</p>
+            <div class="connections-info" id="connectionsInfo">
+                <div class="connection-item">
+                    <span class="connection-label">📥 Источник:</span>
+                    <span class="connection-path" id="sourcePath">Загрузка...</span>
+                </div>
+                <div class="connection-item">
+                    <span class="connection-label">📤 Приемник:</span>
+                    <div class="connection-target">
+                        <span class="connection-path" id="targetPath">Загрузка...</span>
+                        <select id="targetSelect" class="target-select"></select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="content">
+            <div class="catalogs-section" style="display: none;">
+                <h2 class="section-title">🛠️ Специальные действия</h2>
+                <div class="catalogs-grid">
+                    <div class="catalog-item">
+                        <button class="catalog-button" id="btn-contract_versions" onclick="updateContractVersions()" style="background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);">
+                            <span class="catalog-name">Обновить версии договоров</span>
+                            <span class="catalog-comment">Создание и обновление документов "Версия соглашения" для всех договоров с проверкой изменений</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="catalogs-section">
+                <h2 class="section-title">📋 Справочники</h2>
+                <div class="catalogs-grid" id="catalogsGrid">
+                    <!-- Кнопки будут добавлены динамически -->
+                </div>
+            </div>
+
+            <div class="logs-section">
+                <h2 class="section-title">
+                    <span class="status-indicator idle" id="statusIndicator"></span>
+                    📝 Логи обмена
+                    <button class="clear-logs-btn" onclick="clearLogs()">Очистить логи</button>
+                </h2>
+                <div class="logs-container" id="logsContainer">
+                    <div class="empty-logs">Выберите справочник и нажмите кнопку для запуска обмена...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentCatalog = null;
+        let currentPollInterval = null;
+        let currentLogIndex = 0;
+        let availableTargets = [];
+        let selectedTargetKey = null;
+        const logsContainer = document.getElementById('logsContainer');
+        const statusIndicator = document.getElementById('statusIndicator');
+
+        // Загружаем пути подключений
+        async function loadConnections() {
+            try {
+                const response = await fetch('/api/connections');
+                const connections = await response.json();
+                document.getElementById('sourcePath').textContent = connections.source_display || connections.source;
+            } catch (error) {
+                console.error('Ошибка загрузки путей подключений:', error);
+                document.getElementById('sourcePath').textContent = 'Ошибка загрузки';
+            }
+        }
+        
+        function setTargetSelection(targetKey) {
+            selectedTargetKey = targetKey;
+            if (selectedTargetKey) {
+                localStorage.setItem('selectedTargetKey', selectedTargetKey);
+            }
+            const selectedTarget = availableTargets.find(item => item.key === selectedTargetKey);
+            if (selectedTarget) {
+                document.getElementById('targetPath').textContent = selectedTarget.display;
+            }
+        }
+        
+        async function loadTargets() {
+            try {
+                const response = await fetch('/api/targets');
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.error || 'Ошибка загрузки приемников');
+                }
+                
+                availableTargets = data.targets || [];
+                const select = document.getElementById('targetSelect');
+                select.innerHTML = '';
+                
+                availableTargets.forEach(target => {
+                    const option = document.createElement('option');
+                    option.value = target.key;
+                    option.textContent = `${target.label}: ${target.display}`;
+                    if (!target.available) {
+                        option.disabled = true;
+                        option.textContent += ' (недоступен)';
+                    }
+                    select.appendChild(option);
+                });
+                
+                const storedKey = localStorage.getItem('selectedTargetKey');
+                const defaultKey = availableTargets.find(target => target.available)?.key;
+                const initialKey = availableTargets.some(target => target.key === storedKey && target.available)
+                    ? storedKey
+                    : defaultKey;
+                
+                if (!initialKey) {
+                    throw new Error('Нет доступных приемников. Проверьте .env');
+                }
+                
+                select.value = initialKey;
+                setTargetSelection(initialKey);
+            } catch (error) {
+                console.error('Ошибка загрузки приемников:', error);
+                document.getElementById('targetPath').textContent = 'Ошибка загрузки';
+                const select = document.getElementById('targetSelect');
+                select.innerHTML = '<option value="">Нет доступных приемников</option>';
+                select.disabled = true;
+            }
+        }
+
+        // Загружаем список справочников
+        async function loadCatalogs() {
+            try {
+                const response = await fetch('/api/catalogs');
+                const catalogs = await response.json();
+                renderCatalogs(catalogs);
+            } catch (error) {
+                console.error('Ошибка загрузки справочников:', error);
+                logsContainer.innerHTML = `<div class="log-line error">Ошибка загрузки справочников: ${error.message}</div>`;
+            }
+        }
+
+        // Отображаем кнопки справочников
+        function renderCatalogs(catalogs) {
+            const grid = document.getElementById('catalogsGrid');
+            grid.innerHTML = '';
+
+            catalogs.forEach(catalog => {
+                const catalogItem = document.createElement('div');
+                catalogItem.className = 'catalog-item';
+                
+                const button = document.createElement('button');
+                button.className = 'catalog-button';
+                button.id = `btn-${catalog.catalog_name}`;
+                button.onclick = () => runCatalog(catalog.catalog_name);
+                
+                button.innerHTML = `
+                    <span class="catalog-name">${catalog.name_1c}</span>
+                    <span class="catalog-comment">${catalog.comment || ''}</span>
+                `;
+                
+                const actions = document.createElement('div');
+                actions.className = 'catalog-actions';
+                
+                const viewRawBtn = document.createElement('button');
+                viewRawBtn.className = 'view-db-button';
+                viewRawBtn.textContent = '📊 БД';
+                viewRawBtn.onclick = () => viewDatabase(catalog.catalog_name, 'raw');
+                
+                const viewProcessedBtn = document.createElement('button');
+                viewProcessedBtn.className = 'view-db-button processed';
+                viewProcessedBtn.textContent = '📊 Обработанная БД';
+                viewProcessedBtn.onclick = () => viewDatabase(catalog.catalog_name, 'processed');
+                
+                const exportByCodeBtn = document.createElement('button');
+                exportByCodeBtn.className = 'export-by-code-button';
+                exportByCodeBtn.textContent = '🔍 Экспорт по кодам';
+                exportByCodeBtn.onclick = () => showExportByCodesModal(catalog.catalog_name);
+                
+                actions.appendChild(viewRawBtn);
+                actions.appendChild(viewProcessedBtn);
+                actions.appendChild(exportByCodeBtn);
+                
+                if (catalog.db_modified) {
+                    const dbModified = document.createElement('span');
+                    dbModified.className = 'db-modified';
+                    dbModified.textContent = `БД: ${catalog.db_modified}`;
+                    dbModified.title = 'Дата изменения базы данных';
+                    actions.appendChild(dbModified);
+                }
+                
+                catalogItem.appendChild(button);
+                catalogItem.appendChild(actions);
+                
+                grid.appendChild(catalogItem);
+            });
+        }
+
+        // Просмотр базы данных
+        function viewDatabase(catalogName, dbType) {
+            const url = `/db/view/${catalogName}?type=${dbType}`;
+            window.open(url, '_blank');
+        }
+
+        // Обновление версий договоров
+        async function updateContractVersions() {
+            const catalogName = 'contract_versions';
+            if (!selectedTargetKey) {
+                addLog('[ОШИБКА] Не выбран приемник для обновления версий', 'error');
+                return;
+            }
+            
+            // Останавливаем предыдущий polling, если есть
+            if (currentPollInterval) {
+                clearInterval(currentPollInterval);
+                currentPollInterval = null;
+            }
+
+            // Обновляем UI
+            const button = document.getElementById(`btn-${catalogName}`);
+            if (button.disabled) {
+                return;
+            }
+
+            button.disabled = true;
+            button.classList.add('running');
+            currentCatalog = catalogName;
+            statusIndicator.classList.remove('idle');
+            statusIndicator.classList.add('running');
+
+            // Очищаем логи
+            logsContainer.innerHTML = '';
+            addLog(`[ЗАПУСК] Запуск обновления версий договоров...`, 'info');
+
+            try {
+                // Запускаем процесс
+                const response = await fetch(`/api/update-contract-versions`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ target_key: selectedTargetKey })
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Ошибка запуска процесса');
+                }
+
+                // Подключаемся к потоку логов
+                connectToLogStream(catalogName);
+
+            } catch (error) {
+                addLog(`[ОШИБКА] ${error.message}`, 'error');
+                button.disabled = false;
+                button.classList.remove('running');
+                statusIndicator.classList.add('idle');
+                statusIndicator.classList.remove('running');
+            }
+        }
+
+        // Запуск обмена справочника
+        async function runCatalog(catalogName) {
+            if (!selectedTargetKey) {
+                addLog('[ОШИБКА] Не выбран приемник для обмена', 'error');
+                return;
+            }
+            
+            // Останавливаем предыдущий polling, если есть
+            if (currentPollInterval) {
+                clearInterval(currentPollInterval);
+                currentPollInterval = null;
+            }
+
+            // Обновляем UI
+            const button = document.getElementById(`btn-${catalogName}`);
+            if (button.disabled) {
+                return; // Уже запущен
+            }
+
+            // Проверяем статус перед запуском
+            try {
+                const statusResponse = await fetch(`/api/status/${catalogName}`);
+                const status = await statusResponse.json();
+                
+                if (status.running) {
+                    addLog(`[ОШИБКА] Обмен уже запущен для этого справочника`, 'error');
+                    return;
+                }
+            } catch (error) {
+                // Игнорируем ошибки проверки статуса
+            }
+
+            button.disabled = true;
+            button.classList.add('running');
+            currentCatalog = catalogName;
+            statusIndicator.classList.remove('idle');
+            statusIndicator.classList.add('running');
+
+            // Очищаем логи
+            logsContainer.innerHTML = '';
+            addLog(`[ЗАПУСК] Запуск обмена для справочника: ${catalogName}`, 'info');
+
+            try {
+                // Запускаем обмен
+                const response = await fetch(`/api/run/${catalogName}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ target_key: selectedTargetKey })
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    // Если ошибка о том, что обмен уже запущен, пытаемся очистить
+                    if (error.error && error.error.includes('уже запущен')) {
+                        try {
+                            await fetch(`/api/clear/${catalogName}`, { method: 'POST' });
+                            // Повторяем попытку запуска
+                            const retryResponse = await fetch(`/api/run/${catalogName}`, {
+                                method: 'POST'
+                            });
+                            if (retryResponse.ok) {
+                                connectToLogStream(catalogName);
+                                return;
+                            }
+                        } catch (clearError) {
+                            // Игнорируем ошибки очистки
+                        }
+                    }
+                    throw new Error(error.error || 'Ошибка запуска обмена');
+                }
+
+                // Подключаемся к потоку логов
+                connectToLogStream(catalogName);
+
+            } catch (error) {
+                addLog(`[ОШИБКА] ${error.message}`, 'error');
+                button.disabled = false;
+                button.classList.remove('running');
+                statusIndicator.classList.add('idle');
+                statusIndicator.classList.remove('running');
+            }
+        }
+
+        // Подключение к потоку логов через Polling API
+        function connectToLogStream(catalogName) {
+            // Останавливаем предыдущий polling, если есть
+            if (currentPollInterval) {
+                clearInterval(currentPollInterval);
+                currentPollInterval = null;
+            }
+            
+            // Сбрасываем индекс для нового обмена
+            currentLogIndex = 0;
+            currentCatalog = catalogName;
+            
+            // Функция для опроса логов
+            async function pollLogs() {
+                try {
+                    const response = await fetch(`/api/logs/${catalogName}?from=${currentLogIndex}`);
+                    
+                    if (!response.ok) {
+                        if (response.status === 404) {
+                            // Файл логов еще не создан, продолжаем опрос
+                            return;
+                        }
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+                    
+                    const data = await response.json();
+                    
+                    // Добавляем новые строки в лог
+                    if (data.lines && data.lines.length > 0) {
+                        data.lines.forEach(line => {
+                            addLog(line);
+                        });
+                    }
+                    
+                    // Обновляем индекс
+                    currentLogIndex = data.next_index || data.total_lines || 0;
+                    
+                    // Проверяем, завершился ли процесс
+                    if (data.finished) {
+                        // Обмен завершен
+                        addLog('\n[ЗАВЕРШЕНО] Обмен завершен', 'success');
+                        
+                        // Останавливаем polling
+                        if (currentPollInterval) {
+                            clearInterval(currentPollInterval);
+                            currentPollInterval = null;
+                        }
+                        
+                        // Обновляем UI
+                        const button = document.getElementById(`btn-${catalogName}`);
+                        if (button) {
+                            button.disabled = false;
+                            button.classList.remove('running');
+                        }
+                        statusIndicator.classList.add('idle');
+                        statusIndicator.classList.remove('running');
+                        currentCatalog = null;
+                    }
+                    
+                } catch (error) {
+                    console.error('Ошибка polling логов:', error);
+                    // Не останавливаем polling при ошибке - продолжаем попытки
+                }
+            }
+            
+            // Начинаем polling с интервалом 200ms (5 раз в секунду)
+            currentPollInterval = setInterval(pollLogs, 200);
+            
+            // Сразу делаем первый запрос
+            pollLogs();
+        }
+
+        // Добавление строки в лог
+        function addLog(message, type = 'info') {
+            // Удаляем пустое сообщение, если есть
+            const emptyLogs = logsContainer.querySelector('.empty-logs');
+            if (emptyLogs) {
+                emptyLogs.remove();
+            }
+
+            const logLine = document.createElement('div');
+            logLine.className = `log-line ${type}`;
+            
+            // Заменяем экранированные символы
+            message = message.replace(/\\n/g, '\n');
+            logLine.textContent = message;
+            
+            logsContainer.appendChild(logLine);
+            
+            // Автопрокрутка вниз
+            logsContainer.scrollTop = logsContainer.scrollHeight;
+        }
+
+        // Очистка логов
+        function clearLogs() {
+            logsContainer.innerHTML = '<div class="empty-logs">Логи очищены</div>';
+        }
+
+        // Модальное окно для экспорта по кодам (для заказов — только по UUID)
+        let currentExportCatalog = null;
+        const EXPORT_UUID_ONLY_CATALOGS = ['customer_orders', 'supplier_orders'];
+        
+        function showExportByCodesModal(catalogName) {
+            currentExportCatalog = catalogName;
+            const modal = document.getElementById('exportByCodesModal');
+            const catalogNameSpan = document.getElementById('exportCatalogName');
+            const codesGroup = document.getElementById('exportCodesGroup');
+            const modalTitle = document.getElementById('exportByCodesModalTitle');
+            catalogNameSpan.textContent = catalogName;
+            document.getElementById('codesInput').value = '';
+            document.getElementById('uuidsInput').value = '';
+            const uuidOnly = EXPORT_UUID_ONLY_CATALOGS.includes(catalogName);
+            if (uuidOnly) {
+                codesGroup.style.display = 'none';
+                modalTitle.textContent = 'Экспорт по UUID';
+            } else {
+                codesGroup.style.display = 'block';
+                modalTitle.textContent = 'Экспорт по кодам';
+            }
+            modal.style.display = 'block';
+        }
+        
+        function closeExportByCodesModal() {
+            const modal = document.getElementById('exportByCodesModal');
+            modal.style.display = 'none';
+            currentExportCatalog = null;
+        }
+        
+        async function startExportByCodes() {
+            // Сохраняем имя справочника ПЕРЕД закрытием модального окна
+            const catalogName = currentExportCatalog;
+            if (!catalogName) {
+                alert('Ошибка: не указан справочник');
+                return;
+            }
+            
+            const uuidOnly = EXPORT_UUID_ONLY_CATALOGS.includes(catalogName);
+            const codesText = uuidOnly ? '' : document.getElementById('codesInput').value.trim();
+            const uuidsText = document.getElementById('uuidsInput').value.trim();
+            
+            if (uuidOnly) {
+                if (!uuidsText) {
+                    alert('Введите хотя бы один UUID для экспорта');
+                    return;
+                }
+            } else if (!codesText && !uuidsText) {
+                alert('Введите хотя бы один код или UUID');
+                return;
+            }
+            
+            const codes = uuidOnly ? [] : (codesText
+                ? codesText.split(/[\n,;]+/).map(code => code.trim()).filter(code => code.length > 0)
+                : []);
+            const uuids = uuidsText
+                ? uuidsText.split(/[\n,;]+/).map(u => u.trim()).filter(u => u.length > 0)
+                : [];
+            
+            if (uuidOnly && uuids.length === 0) {
+                alert('Не найдено ни одного UUID');
+                return;
+            }
+            if (!uuidOnly && codes.length === 0 && uuids.length === 0) {
+                alert('Не найдено ни одного кода или UUID');
+                return;
+            }
+            
+            // Закрываем модальное окно ПОСЛЕ сохранения всех данных
+            closeExportByCodesModal();
+            
+            // Останавливаем предыдущий polling, если есть
+            if (currentPollInterval) {
+                clearInterval(currentPollInterval);
+                currentPollInterval = null;
+            }
+            
+            // Обновляем UI
+            const button = document.getElementById(`btn-${catalogName}`);
+            if (button && button.disabled) {
+                return; // Уже запущен
+            }
+            
+            if (button) {
+                button.disabled = true;
+                button.classList.add('running');
+            }
+            
+            statusIndicator.classList.remove('idle');
+            statusIndicator.classList.add('running');
+            
+            // Очищаем логи
+            logsContainer.innerHTML = '';
+            addLog(`[ЗАПУСК] Экспорт справочника "${catalogName}"`, 'info');
+            if (!uuidOnly && codes.length > 0) {
+                addLog(`[КОДЫ] Найдено: ${codes.length} шт.`, 'info');
+            }
+            if (uuids.length > 0) {
+                addLog(`[UUID] Найдено: ${uuids.length} шт.`, 'info');
+            }
+            
+            try {
+                if (!selectedTargetKey) {
+                    throw new Error('Не выбран приемник для экспорта');
+                }
+                
+                // Запускаем экспорт
+                const response = await fetch(`/api/export-by-codes/${catalogName}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ codes: codes, uuids: uuids, target_key: selectedTargetKey })
+                });
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Ошибка запуска экспорта');
+                }
+                
+                // Подключаемся к потоку логов
+                connectToLogStream(catalogName);
+                
+            } catch (error) {
+                addLog(`[ОШИБКА] ${error.message}`, 'error');
+                if (button) {
+                    button.disabled = false;
+                    button.classList.remove('running');
+                }
+                statusIndicator.classList.add('idle');
+                statusIndicator.classList.remove('running');
+            }
+        }
+        
+        // Закрытие модального окна при клике вне его
+        window.onclick = function(event) {
+            const modal = document.getElementById('exportByCodesModal');
+            if (event.target === modal) {
+                closeExportByCodesModal();
+            }
+        }
+        
+        // Закрытие модального окна по Escape
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeExportByCodesModal();
+            }
+        });
+        
+        // Загружаем данные при загрузке страницы
+        window.addEventListener('load', () => {
+            const targetSelect = document.getElementById('targetSelect');
+            targetSelect.addEventListener('change', (event) => {
+                setTargetSelection(event.target.value);
+            });
+            loadConnections();
+            loadTargets();
+            loadCatalogs();
+        });
+    </script>
+    
+    <!-- Модальное окно для экспорта по кодам (для заказов — только по UUID) -->
+    <div id="exportByCodesModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="exportByCodesModalTitle">🔍 Экспорт по кодам</h2>
+                <span class="close" onclick="closeExportByCodesModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="exportCatalogName">Справочник:</label>
+                    <div id="exportCatalogName" style="padding: 8px; background: #f7fafc; border-radius: 5px; font-weight: 600;"></div>
+                </div>
+                <div class="form-group" id="exportCodesGroup">
+                    <label for="codesInput">Коды для экспорта:</label>
+                    <textarea id="codesInput" placeholder="Введите коды, по одному на строку или через запятую/точку с запятой&#10;&#10;Пример:&#10;001&#10;002&#10;003"></textarea>
+                    <div class="hint">
+                        💡 Можно вводить коды по одному на строку или через запятую/точку с запятой
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="uuidsInput">UUID для экспорта:</label>
+                    <textarea id="uuidsInput" placeholder="Введите UUID, по одному на строку или через запятую/точку с запятой&#10;&#10;Пример:&#10;a763cfbb-f94f-4c67-8e13-0e96a3a7f353&#10;550e8400-e29b-41d4-a716-446655440000"></textarea>
+                    <div class="hint">
+                        💡 Можно вводить UUID по одному на строку или через запятую/точку с запятой
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeExportByCodesModal()">Отмена</button>
+                <button class="btn btn-primary" onclick="startExportByCodes()">Запустить экспорт</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
