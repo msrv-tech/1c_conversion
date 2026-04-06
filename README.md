@@ -33,10 +33,10 @@ erDiagram
     CATALOG_MAPPING ||--o{ PROCESSOR : "дает маршрут catalog"
     CHART_MAPPING ||--o{ PROCESSOR : "дает свертки счетов и субконто"
     PROCESSOR }o--|| PROCESSED_DB : "формирует"
-    PROCESSOR ||--o{ REFERENCE_OBJECTS_DB : "накапливает ссылки"
 
     PROCESSED_DB ||--o{ EXPORT_WRITER : "читается"
     TARGET_1C ||--o{ EXPORT_WRITER : "запись через COM"
+    EXPORT_WRITER ||--o{ REFERENCE_OBJECTS_DB : "фиксирует ссылки и статус записи"
     REFERENCE_OBJECTS_DB ||--o{ FILL_UNFILLED : "дает незаполненные ссылки"
     PROCESSED_DB ||--o{ FILL_UNFILLED : "дает данные для дозаполнения"
     TARGET_1C ||--o{ FILL_UNFILLED : "дозапись через COM"
