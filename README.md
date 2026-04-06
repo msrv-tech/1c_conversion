@@ -112,6 +112,9 @@ python main.py --export --catalog contractors --target-1c target --sqlite-db BD
 pip install -r requirements.txt
 ```
 
+
+Проект миграции под ключ можно заказать у наших партнеров, [ООО «Рациональ»](https://rational-it.ru/perehod-s-1c-upp-na-1c-erp/).
+
 ## License
 
 MIT. See `LICENSE`.
