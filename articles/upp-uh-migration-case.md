@@ -27,7 +27,7 @@
 
 Это выглядит тривиально только на уровне блок-схемы. Ключевая ценность в том, что между импортом и экспортом появляется реальный контролируемый слой данных, а не временный буфер, который нельзя инспектировать.
 
-[Схема архитектуры](upp-uh-migration-case-media/architecture-overview.png)
+![Схема архитектуры](https://raw.githubusercontent.com/msrv-tech/1c_conversion/main/articles/upp-uh-migration-case-media/architecture-overview.png)
 
 ## Какие задачи должен был закрыть контур
 
@@ -91,7 +91,7 @@ SQLite в этом кейсе дает:
 
 Это важно, потому что на следующем этапе уже можно работать не с «черным COM-объектом», а с предсказуемым представлением данных.
 
-[Пример сырой БД](upp-uh-migration-case-media/raw-db-example.png)
+![Пример сырой БД](https://raw.githubusercontent.com/msrv-tech/1c_conversion/main/articles/upp-uh-migration-case-media/raw-db-example.png)
 
 ## Зачем понадобилось обновление метаданных обеих конфигураций
 
@@ -129,7 +129,7 @@ SQLite в этом кейсе дает:
 
 Это позволяет не смешивать инфраструктурный код и бизнес-логику конкретной сущности.
 
-[Пример обработанной БД](upp-uh-migration-case-media/processed-db-example.png)
+![Пример обработанной БД](https://raw.githubusercontent.com/msrv-tech/1c_conversion/main/articles/upp-uh-migration-case-media/processed-db-example.png)
 
 ## Как устроены маппинги
 
@@ -174,6 +174,8 @@ SQLite в этом кейсе дает:
 - сохранить это в рабочей базе маппинга;
 - повторно прогонять обработку уже на стабильной основе.
 
+![Пример маппинга](https://raw.githubusercontent.com/msrv-tech/1c_conversion/main/articles/upp-uh-migration-case-media/mapping-example.png)
+
 ## Отдельный контур для ссылочных объектов
 
 Одна из самых полезных частей решения это отдельная база `reference_objects`, которая заполняется на этапе экспорта.
@@ -192,7 +194,7 @@ SQLite в этом кейсе дает:
 
 В данном подходе ссылочный контур становится наблюдаемым и управляемым.
 
-[Таблица reference_objects](upp-uh-migration-case-media/reference-objects.png)
+![Таблица reference_objects](https://raw.githubusercontent.com/msrv-tech/1c_conversion/main/articles/upp-uh-migration-case-media/reference-objects.png)
 
 ## Как устроен экспорт в УХ
 
@@ -210,6 +212,8 @@ SQLite в этом кейсе дает:
 С точки зрения архитектуры это принципиально лучше прямой конвертации, потому что writer получает уже подготовленные данные, а не решает все проблемы сразу на лету.
 
 Именно за счет этого проще сопровождать проект, отлаживать узкие места и повторять выгрузку только там, где это нужно.
+
+![Лог экспорта](https://raw.githubusercontent.com/msrv-tech/1c_conversion/main/articles/upp-uh-migration-case-media/export-log.png)
 
 ## Веб-интерфейс как операционный слой
 
@@ -229,7 +233,7 @@ SQLite в этом кейсе дает:
 - веб не дублирует бизнес-логику, а использует тот же исполняемый контур;
 - операции становятся доступными не только разработчику, который сидит в терминале.
 
-[Главная страница веб-интерфейса](upp-uh-migration-case-media/web-main.png)
+![Главная страница веб-интерфейса](https://raw.githubusercontent.com/msrv-tech/1c_conversion/main/articles/upp-uh-migration-case-media/web-main.png)
 
 ## Запуск по расписанию и уведомления
 
