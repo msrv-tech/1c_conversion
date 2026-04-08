@@ -64,6 +64,10 @@
 
 <p>Дополнительно SQLite отлично ложится на модульную структуру миграции: <code>один каталог -&gt; один набор loader/processor/writer -&gt; одна или две БД</code>.</p>
 
+<p>На практике это выглядит как набор отдельных файлов БД по сущностям и стадиям обработки:</p>
+
+<p><img alt="Набор SQLite-баз по каталогам" src="https://raw.githubusercontent.com/msrv-tech/1c_conversion/main/articles/upp-uh-migration-case-media/screen_bd.png" style="max-width: 100%;" /></p>
+
 <h2>Как устроен импорт из УПП</h2>
 
 <p>Этап импорта реализован через набор модулей в <code>IN/</code>. Для каждого каталога есть свой loader, который:</p>
