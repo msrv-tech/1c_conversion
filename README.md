@@ -115,6 +115,12 @@ pip install -r requirements.txt
 
 Проект миграции под ключ можно заказать у наших партнеров, [ООО «Рациональ»](https://rational-it.ru/perehod-s-1c-upp-na-1c-erp/).
 
+## Статьи
+
+[![Infostart](https://infostart.ru/bitrix/templates/sandbox_empty/assets/tpl/abo/img/logo.svg)](https://infostart.ru/1c/articles/2660774/)
+
+- [**Infostart:** Кейс миграции данных из 1С:УПП в 1С:УХ через SQLite и Python COM](https://infostart.ru/1c/articles/2660774/)
+
 ## License
 
 MIT. See `LICENSE`.
